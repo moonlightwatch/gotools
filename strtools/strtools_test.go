@@ -1,8 +1,9 @@
 package strtools_test
 
 import (
-	"gotools/strtools"
 	"testing"
+
+	"github.com/moonlightwatch/gotools/strtools"
 )
 
 func TestParseList(t *testing.T) {
