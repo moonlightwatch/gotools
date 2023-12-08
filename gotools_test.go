@@ -17,6 +17,7 @@ func TestPickReaderPrefix(t *testing.T) {
 		{"hello", 6, "hello"},
 		{"hello", 0, ""},
 		{"hello", -1, ""},
+		{"", 1, ""},
 	}
 
 	for _, test := range tests {

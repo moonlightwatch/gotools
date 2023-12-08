@@ -24,3 +24,35 @@ func TestTTLMap(t *testing.T) {
 		t.Errorf("expected %v, actual %v", false, ok)
 	}
 }
+
+func TestTTLMapGet(t *testing.T) {
+	m := NewTTLMap(time.Second)
+	m.Set("key", "value", 20*time.Second)
+	if v, ok := m.Get("key"); !ok || v != "value" {
+		t.Errorf("expected %v, actual %v", "value", v)
+	}
+	if _, ok := m.Get("key2"); ok {
+		t.Errorf("expected %v, actual %v", false, ok)
+	}
+	if v, ok := m.Get("key"); !ok || v != "value" {
+		t.Errorf("expected %v, actual %v", false, ok)
+	}
+}
+
+func TestTTLMapDel(t *testing.T) {
+	m := NewTTLMap(time.Second)
+	m.Set("key", "value", 20*time.Second)
+	if v, ok := m.Get("key"); !ok || v != "value" {
+		t.Errorf("expected %v, actual %v", "value", v)
+	}
+	if m.Len() != 1 {
+		t.Errorf("expected %v, actual %v", 1, m.Len())
+	}
+	m.Delete("key")
+	if _, ok := m.Get("key"); ok {
+		t.Errorf("expected %v, actual %v", false, ok)
+	}
+	if m.Len() != 0 {
+		t.Errorf("expected %v, actual %v", 0, m.Len())
+	}
+}
