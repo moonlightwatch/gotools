@@ -1,9 +1,7 @@
-package strtools_test
+package strtools
 
 import (
 	"testing"
-
-	"github.com/moonlightwatch/gotools/strtools"
 )
 
 func TestParseList(t *testing.T) {
@@ -22,7 +20,7 @@ func TestParseList(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		actual := strtools.ParseList(test.input)
+		actual := ParseList(test.input)
 		if len(actual) != len(test.expected) {
 			t.Errorf("ParseList(%s): expected %v, actual %v", test.input, test.expected, actual)
 		}
