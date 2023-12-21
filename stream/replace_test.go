@@ -3,7 +3,6 @@ package stream_test
 import (
 	"bytes"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"strings"
 	"testing"
@@ -111,7 +110,6 @@ func TestReplaceBig(t *testing.T) {
 		if writer.String() != d {
 			t.Errorf("Replace(%s, %s, %s): expected %v, actual %v", s, "翩若惊鸿", "XXXX", d, writer.String())
 		}
-		fmt.Println(writer.String())
 	}
 }
 

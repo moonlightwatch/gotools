@@ -33,6 +33,7 @@ func Replace(reader io.Reader, writer io.Writer, old, new []byte) error {
 			// 读取old的剩余字节
 			oldBuf := make([]byte, oldLen-1)
 			oldBufLen, err := reader.Read(oldBuf)
+			oldBuf = append(buf, oldBuf[:oldBufLen]...)
 			// 读取出错，退出
 			if err != nil {
 				if err == io.EOF {
@@ -46,7 +47,6 @@ func Replace(reader io.Reader, writer io.Writer, old, new []byte) error {
 				return err
 			}
 			// 如果读取的oldBuf和old相同，将new写入writer，即执行替换操作
-			oldBuf = append(buf, oldBuf[:oldBufLen]...)
 			if bytes.EqualFold(oldBuf, old) {
 				_, err = writer.Write(new)
 				if err != nil {
