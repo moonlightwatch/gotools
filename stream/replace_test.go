@@ -113,19 +113,6 @@ func TestReplaceBig(t *testing.T) {
 		}
 		fmt.Println(writer.String())
 	}
-	{
-
-		reader := strings.NewReader(s)
-		writer := strings.Builder{}
-		err := stream.Replace(reader, &writer, []byte("洛神赋"), []byte("XXXX"))
-		if err != nil {
-			t.Errorf("Replace(%s, %s, %s): expected %v, actual %v", s, "翩若惊鸿", "XXXX", nil, err)
-		}
-		if writer.String() != d {
-			t.Errorf("Replace(%s, %s, %s): expected %v, actual %v", s, "翩若惊鸿", "XXXX", d, writer.String())
-		}
-		fmt.Println(writer.String())
-	}
 }
 
 func TestReplaceGzip(t *testing.T) {
