@@ -54,7 +54,7 @@ func (l *List[T]) Elements() []T {
 	return l.elements
 }
 
-// Difference 取差集，返回一个新的列表，其中元素是other中存在，但l中不存在的元素
+// Difference 取差集，返回一个新的列表，其中元素是l中存在，但other中不存在的元素
 func (l *List[T]) Difference(other *List[T]) *List[T] {
 	result := NewList[T]()
 	for _, e := range l.elements {
@@ -130,7 +130,7 @@ func (l *SafeList[T]) Elements() []T {
 	return l.elements
 }
 
-// Difference 取差集，返回一个新的列表，其中元素是other中存在，但l中不存在的元素
+// Difference 取差集，返回一个新的列表，其中元素l中存在，但other中不存在的元素
 func (l *SafeList[T]) Difference(other *SafeList[T]) *SafeList[T] {
 	l.mux.RLock()
 	defer l.mux.RUnlock()
