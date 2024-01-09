@@ -90,7 +90,7 @@ func (m *SuperMap[K, V]) IsEmpty() bool {
 }
 
 // ForEach 遍历列表
-func (m *SuperMap[K, V]) ForEach(fn func(key K, value V)) {
+func (m *SuperMap[K, V]) Foreach(fn func(key K, value V)) {
 	m.rwlock.RLock()
 	defer m.rwlock.RUnlock()
 	for k, v := range m.elements {
@@ -118,8 +118,8 @@ func (m *SuperMap[K, V]) Equal(other *SuperMap[K, V]) bool {
 	if len(m.elements) != len(other.elements) {
 		return false
 	}
-	for k, v := range m.elements {
-		if reflect.DeepEqual(v, other.Get(k)) {
+	for _, k := range m.Keys() {
+		if v, contains := m.elements[k]; !contains || !reflect.DeepEqual(v, other.Get(k)) {
 			return false
 		}
 	}

@@ -26,8 +26,9 @@ func TestTTLMap(t *testing.T) {
 }
 
 func TestTTLMapGet(t *testing.T) {
-	m := NewTTLMap(time.Second)
+	m := NewTTLMap(10 * time.Second)
 	m.Set("key", "value", 20*time.Second)
+	m.Set("key01", "value", 2*time.Second)
 	if v, ok := m.Get("key"); !ok || v != "value" {
 		t.Errorf("expected %v, actual %v", "value", v)
 	}
@@ -35,6 +36,10 @@ func TestTTLMapGet(t *testing.T) {
 		t.Errorf("expected %v, actual %v", false, ok)
 	}
 	if v, ok := m.Get("key"); !ok || v != "value" {
+		t.Errorf("expected %v, actual %v", false, ok)
+	}
+	time.Sleep(2 * time.Second)
+	if _, ok := m.Get("key01"); ok {
 		t.Errorf("expected %v, actual %v", false, ok)
 	}
 }
