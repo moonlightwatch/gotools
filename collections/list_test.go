@@ -9,7 +9,7 @@ import (
 func TestList(t *testing.T) {
 
 	{ // 测试List IntComparable
-		l := collections.NewList[collections.IntComparable]()
+		l := collections.NewList[int]()
 		l.Add(1)
 		l.Add(2)
 		l.Add(3)
@@ -79,7 +79,7 @@ func TestList(t *testing.T) {
 
 	}
 	{ // 测试List StringComparable
-		l := collections.NewList[collections.StringComparable]()
+		l := collections.NewList[string]()
 		l.Add("1")
 		l.Add("2")
 		l.Add("3")
@@ -152,11 +152,11 @@ func TestList(t *testing.T) {
 }
 
 func TestDiff(t *testing.T) {
-	l1 := collections.NewList[collections.IntComparable]()
+	l1 := collections.NewList[int]()
 	l1.Add(1)
 	l1.Add(2)
 	l1.Add(3)
-	l2 := collections.NewList[collections.IntComparable]()
+	l2 := collections.NewList[int]()
 	l2.Add(2)
 	l2.Add(3)
 	l2.Add(4)

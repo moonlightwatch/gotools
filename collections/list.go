@@ -1,14 +1,17 @@
 package collections
 
-import "sync"
+import (
+	"reflect"
+	"sync"
+)
 
 // List 是一个泛型实现的列表，但并非协程安全的
 // 如需协程安全，请使用SafeList
-type List[T Comparable] struct {
+type List[T any] struct {
 	elements []T
 }
 
-func NewList[T Comparable]() *List[T] {
+func NewList[T any]() *List[T] {
 	return &List[T]{
 		elements: make([]T, 0),
 	}
@@ -22,7 +25,7 @@ func (l *List[T]) Add(element T) {
 // Remove 删除一个元素
 func (l *List[T]) Remove(element T) {
 	for i, e := range l.elements {
-		if e.Euqal(element) {
+		if reflect.DeepEqual(e, element) {
 			l.elements = append(l.elements[:i], l.elements[i+1:]...)
 			return
 		}
@@ -42,7 +45,7 @@ func (l *List[T]) Size() int {
 // Contains 判断列表是否包含某个元素
 func (l *List[T]) Contains(element T) bool {
 	for _, e := range l.elements {
-		if e.Euqal(element) {
+		if reflect.DeepEqual(e, element) {
 			return true
 		}
 	}
@@ -66,12 +69,12 @@ func (l *List[T]) Difference(other *List[T]) *List[T] {
 }
 
 // SafeList 是一个泛型实现的列表，是协程安全的
-type SafeList[T Comparable] struct {
+type SafeList[T any] struct {
 	elements []T
 	mux      *sync.RWMutex
 }
 
-func NewSafeList[T Comparable]() *SafeList[T] {
+func NewSafeList[T any]() *SafeList[T] {
 	return &SafeList[T]{
 		elements: make([]T, 0),
 		mux:      &sync.RWMutex{},
@@ -90,7 +93,7 @@ func (l *SafeList[T]) Remove(element T) {
 	l.mux.Lock()
 	defer l.mux.Unlock()
 	for i, e := range l.elements {
-		if e.Euqal(element) {
+		if reflect.DeepEqual(e, element) {
 			l.elements = append(l.elements[:i], l.elements[i+1:]...)
 			return
 		}
@@ -116,7 +119,7 @@ func (l *SafeList[T]) Contains(element T) bool {
 	l.mux.RLock()
 	defer l.mux.RUnlock()
 	for _, e := range l.elements {
-		if e.Euqal(element) {
+		if reflect.DeepEqual(e, element) {
 			return true
 		}
 	}

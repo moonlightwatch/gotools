@@ -9,7 +9,7 @@ import (
 func TestSuperMap(t *testing.T) {
 
 	{ // 测试SuperMap IntComparable
-		m := collections.NewSuperMap[int, collections.IntComparable]()
+		m := collections.NewSuperMap[int, int]()
 		m.Add(1, 1)
 		m.Add(2, 2)
 		m.Add(3, 3)
@@ -66,7 +66,7 @@ func TestSuperMap(t *testing.T) {
 func TestSuperMapUpdate(t *testing.T) {
 
 	{ // 测试SuperMap IntComparable
-		m := collections.NewSuperMap[int, collections.IntComparable]()
+		m := collections.NewSuperMap[int, int]()
 		m.Add(1, 1)
 		m.Add(2, 2)
 		m.Add(3, 3)
@@ -74,7 +74,7 @@ func TestSuperMapUpdate(t *testing.T) {
 			t.Errorf("SuperMap.Size() failed. m.Size(): %d", m.Size())
 		}
 
-		updateMap := collections.NewSuperMap[int, collections.IntComparable]()
+		updateMap := collections.NewSuperMap[int, int]()
 		updateMap.Add(1, 2)
 		updateMap.Add(4, 4)
 

@@ -1,13 +1,16 @@
 package collections
 
-import "sync"
+import (
+	"reflect"
+	"sync"
+)
 
-type SuperMap[K int | string, V Comparable] struct {
+type SuperMap[K int | string, V any] struct {
 	elements map[K]V
 	rwlock   *sync.RWMutex
 }
 
-func NewSuperMap[K int | string, V Comparable]() *SuperMap[K, V] {
+func NewSuperMap[K int | string, V any]() *SuperMap[K, V] {
 	return &SuperMap[K, V]{
 		elements: make(map[K]V),
 		rwlock:   &sync.RWMutex{},
@@ -116,7 +119,7 @@ func (m *SuperMap[K, V]) Equal(other *SuperMap[K, V]) bool {
 		return false
 	}
 	for k, v := range m.elements {
-		if other.Get(k).Euqal(v) {
+		if reflect.DeepEqual(v, other.Get(k)) {
 			return false
 		}
 	}
@@ -130,7 +133,7 @@ func (m *SuperMap[K, V]) Update(other *SuperMap[K, V]) *SuperMap[K, V] {
 	defer m.rwlock.Unlock()
 	for k, v := range other.elements {
 		value, contains := m.elements[k]
-		if !contains || !value.Euqal(v) {
+		if !contains || !reflect.DeepEqual(value, v) {
 			m.elements[k] = v
 			newMap.Add(k, v)
 		}
