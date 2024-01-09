@@ -6,10 +6,9 @@
 
 - collections
     - `type TTLMap struct`: TTLMap 是一个带有过期时间的map
-    - `type Comparable interface`: Comparable 是一个可比较的接口
-    - `type List[T Comparable] struct`: List 是一个泛型实现的列表，但并非协程安全的
-    - `type SafeList[T Comparable] struct`: SafeList 是一个泛型实现的列表，是协程安全的
-    - `type SuperMap[K int | string, V Comparable] struct`: SuperMap 是一个泛型实现的协程安全的Map,提供多种实用的操作函数，如：过滤、更新、比较 等
+    - `type List[T any] struct`: List 是一个泛型实现的列表，但并非协程安全的
+    - `type SafeList[T any] struct`: SafeList 是一个泛型实现的列表，是协程安全的
+    - `type SuperMap[K int | string, V any] struct`: SuperMap 是一个泛型实现的协程安全的Map,提供多种实用的操作函数，如：过滤、更新、比较 等
 - stream
     - `func Replace(reader io.Reader, writer io.Writer, old, new []byte) error `: Replace 从reader中读取数据，替换old为new，并写入writer（流式处理，不会全部读到内存里）
     - `func ReplaceGzip(reader io.Reader, writer io.Writer, old, new []byte) error `: ReplaceGzip 从reader中读取数据，替换old为new，并写入writer，reader和writer内容都是gzip格式（流式处理，不会全部读到内存里）
