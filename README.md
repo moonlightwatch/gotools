@@ -14,3 +14,32 @@
     - `func ReplaceGzip(reader io.Reader, writer io.Writer, old, new []byte) error `: ReplaceGzip 从reader中读取数据，替换old为new，并写入writer，reader和writer内容都是gzip格式（流式处理，不会全部读到内存里）
 - strtools
     - `ParseList(s string) []string`: ParseList 解析字符串为字符串列表
+
+## 使用示例
+
+```
+package main
+
+import (
+	"fmt"
+
+	"github.com/moonlightwatch/gotools/collections"
+)
+
+func main() {
+	list1 := collections.NewSafeList[string]()
+	list2 := collections.NewSafeList[string]()
+
+	list1.Add("a")
+	list1.Add("b")
+	list1.Add("c")
+
+	list2.Add("c")
+	list2.Add("d")
+
+	diff := list1.Difference(list2).Elements()
+
+	fmt.Println(diff)
+}
+```
+上述代码输出： `[a b]`
