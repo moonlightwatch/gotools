@@ -49,6 +49,22 @@ func (l *List[T]) Contains(element T) bool {
 	return false
 }
 
+// Elements 获取列表中的所有元素
+func (l *List[T]) Elements() []T {
+	return l.elements
+}
+
+// Difference 取差集，返回一个新的列表，其中元素是other中存在，但l中不存在的元素
+func (l *List[T]) Difference(other *List[T]) *List[T] {
+	result := NewList[T]()
+	for _, e := range l.elements {
+		if !other.Contains(e) {
+			result.Add(e)
+		}
+	}
+	return result
+}
+
 // SafeList 是一个泛型实现的列表，是协程安全的
 type SafeList[T Comparable] struct {
 	elements []T
@@ -105,4 +121,26 @@ func (l *SafeList[T]) Contains(element T) bool {
 		}
 	}
 	return false
+}
+
+// Elements 获取列表中的所有元素
+func (l *SafeList[T]) Elements() []T {
+	l.mux.RLock()
+	defer l.mux.RUnlock()
+	return l.elements
+}
+
+// Difference 取差集，返回一个新的列表，其中元素是other中存在，但l中不存在的元素
+func (l *SafeList[T]) Difference(other *SafeList[T]) *SafeList[T] {
+	l.mux.RLock()
+	defer l.mux.RUnlock()
+	other.mux.RLock()
+	defer other.mux.RUnlock()
+	result := NewSafeList[T]()
+	for _, e := range l.elements {
+		if !other.Contains(e) {
+			result.Add(e)
+		}
+	}
+	return result
 }

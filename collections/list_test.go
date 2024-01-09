@@ -150,3 +150,30 @@ func TestList(t *testing.T) {
 	}
 
 }
+
+func TestDiff(t *testing.T) {
+	l1 := collections.NewList[collections.IntComparable]()
+	l1.Add(1)
+	l1.Add(2)
+	l1.Add(3)
+	l2 := collections.NewList[collections.IntComparable]()
+	l2.Add(2)
+	l2.Add(3)
+	l2.Add(4)
+	l3 := l1.Difference(l2)
+	if l3.Size() != 1 {
+		t.Errorf("List.Size() failed. l3.Size(): %d", l3.Size())
+	}
+	if !l3.Contains(1) {
+		t.Errorf("List.Contains() failed. l3.Contains(1): %t", l3.Contains(1))
+	}
+	if l3.Contains(2) {
+		t.Errorf("List.Contains() failed. l3.Contains(2): %t", l3.Contains(2))
+	}
+	if l3.Contains(3) {
+		t.Errorf("List.Contains() failed. l3.Contains(3): %t", l3.Contains(3))
+	}
+	if l3.Contains(4) {
+		t.Errorf("List.Contains() failed. l3.Contains(4): %t", l3.Contains(4))
+	}
+}
