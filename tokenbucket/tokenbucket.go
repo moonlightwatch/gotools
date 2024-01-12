@@ -1,7 +1,6 @@
 package tokenbucket
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
@@ -79,7 +78,6 @@ func (tb *TokenBucket) refill() {
 		}
 	}
 	tb.lastTokenTime = now
-	fmt.Println(tb.availableTokens)
 }
 
 // AvailableTokens 返回桶中可用的令牌数量
