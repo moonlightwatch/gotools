@@ -152,7 +152,7 @@ func TestReplaceGzip(t *testing.T) {
 		gw.Close()
 		reader := bytes.NewReader(buf.Bytes())
 		writer := bytes.Buffer{}
-		err = stream.ReplaceGzip(reader, &writer, []byte(test.old), []byte(test.new))
+		err = stream.Replace(reader, &writer, []byte(test.old), []byte(test.new))
 		if err != nil {
 			t.Errorf("ReplaceGzip(%s, %s, %s): expected %v, actual %v", test.input, test.old, test.new, nil, err)
 		}
@@ -167,6 +167,63 @@ func TestReplaceGzip(t *testing.T) {
 		}
 		if string(data) != test.expected {
 			t.Errorf("ReplaceGzip(%s, %s, %s): expected %v, actual %v", test.input, test.old, test.new, test.expected, writer.String())
+		}
+	}
+}
+
+func TestMaskBytes(t *testing.T) {
+	var tests = []struct {
+		input    []byte
+		keywords [][]byte
+		maskRune []byte
+		expected []byte
+	}{
+		{[]byte("hello"), [][]byte{[]byte("l")}, []byte("*"), []byte("he**o")},
+		{[]byte("hello"), [][]byte{[]byte("l")}, []byte(" "), []byte("he  o")},
+		{[]byte("hello"), [][]byte{[]byte("l")}, []byte("a"), []byte("heaao")},
+		{[]byte("hello"), [][]byte{[]byte("l")}, []byte("中"), []byte("he中中o")},
+		{[]byte("hello"), [][]byte{[]byte("l")}, []byte("😀"), []byte("he😀😀o")},
+		{[]byte("hello"), [][]byte{[]byte("l")}, []byte("中"), []byte("he中中o")},
+		{[]byte("hello"), [][]byte{[]byte("ll")}, []byte("😀"), []byte("he😀😀o")},
+		{[]byte("hello"), [][]byte{[]byte("he")}, []byte("😀"), []byte("😀😀llo")},
+	}
+
+	for _, test := range tests {
+		result := stream.MaskBytes(test.input, test.keywords, test.maskRune)
+
+		if !bytes.Equal(result, test.expected) {
+			t.Errorf("MaskBytes(%s, %s, %v): expected %v, actual %v", test.input, test.keywords, test.maskRune, test.expected, test.input)
+		}
+	}
+}
+
+func TestMaskKeywords(t *testing.T) {
+	var tests = []struct {
+		input    string
+		keywords [][]byte
+		maskRune []byte
+		expected string
+	}{
+		{"hello", [][]byte{[]byte("l")}, []byte("*"), "he**o"},
+		{"hello", [][]byte{[]byte("l")}, []byte(" "), "he  o"},
+		{"hello", [][]byte{[]byte("l")}, []byte("a"), "heaao"},
+		{"hello", [][]byte{[]byte("l")}, []byte("中"), "he中中o"},
+		{"hello", [][]byte{[]byte("l")}, []byte("😀"), "he😀😀o"},
+		{"hello", [][]byte{[]byte("l")}, []byte("中"), "he中中o"},
+		{"hello", [][]byte{[]byte("ll")}, []byte("😀"), "he😀😀o"},
+		{"hello", [][]byte{[]byte("he")}, []byte("😀"), "😀😀llo"},
+		{"hello", [][]byte{[]byte("he"), []byte("ll"), []byte("o")}, []byte("😀"), "😀😀😀😀😀"},
+	}
+
+	for _, test := range tests {
+		reader := strings.NewReader(test.input)
+		writer := strings.Builder{}
+		err := stream.MaskKeywords(reader, &writer, test.keywords, test.maskRune)
+		if err != nil {
+			t.Errorf("MaskKeywords(%s, %s, %v): expected %v, actual %v", test.input, test.keywords, test.maskRune, nil, err)
+		}
+		if writer.String() != test.expected {
+			t.Errorf("MaskKeywords(%s, %s, %v): expected %v, actual %v", test.input, test.keywords, test.maskRune, test.expected, writer.String())
 		}
 	}
 }

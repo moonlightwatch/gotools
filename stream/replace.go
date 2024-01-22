@@ -2,7 +2,6 @@ package stream
 
 import (
 	"bytes"
-	"compress/gzip"
 	"io"
 )
 
@@ -71,59 +70,54 @@ func Replace(reader io.Reader, writer io.Writer, old, new []byte) error {
 	return nil
 }
 
-// ReplaceGzip 从reader中读取数据，替换old为new，并写入writer，reader和writer都是gzip格式
-func ReplaceGzip(reader io.Reader, writer io.Writer, old, new []byte) error {
-	oldLen := len(old)
-	var r io.Reader
-	r, err := gzip.NewReader(reader)
+// MaskKeywords 从reader中读取数据，将words中的关键字替换为mask，并写入writer
+func MaskKeywords(reader io.Reader, writer io.Writer, words [][]byte, mask []byte) error {
+	if len(words) == 0 {
+		_, err := io.Copy(writer, reader)
+		return err
+	}
+	maxLen := 0
+	for _, word := range words {
+		if len(word) > maxLen {
+			maxLen = len(word)
+		}
+	}
+
+	localCache := make([]byte, maxLen)
+	n, err := reader.Read(localCache)
+	if err == io.EOF {
+		_, err = writer.Write(MaskBytes(localCache[:n], words, mask))
+		return err
+	}
 	if err != nil {
 		return err
 	}
-	gw := gzip.NewWriter(writer)
-	defer gw.Close()
 
 	buf := make([]byte, 1)
 	for {
-		_, err := r.Read(buf)
+		localCache = MaskBytes(localCache, words, mask)
+		_, err := reader.Read(buf)
 		if err == io.EOF {
-			break
+			_, err = writer.Write(MaskBytes(localCache, words, mask))
+			return err
 		}
 		if err != nil {
 			return err
 		}
-		if buf[0] == old[0] {
-			oldBuf := make([]byte, oldLen-1)
-			oldBufLen, err := r.Read(oldBuf)
-			oldBuf = append(buf, oldBuf[:oldBufLen]...)
-			if err != nil {
-				if err == io.EOF {
-					_, err = gw.Write(oldBuf)
-					if err != nil {
-						return err
-					}
-					break
-				}
-				return err
-			}
-			if bytes.EqualFold(oldBuf, old) {
-				_, err = gw.Write(new)
-				if err != nil {
-					return err
-				}
-			} else {
-				r = io.MultiReader(bytes.NewReader(oldBuf[1:]), r)
-				_, err = gw.Write(buf)
-				if err != nil {
-					return err
-				}
-			}
-		} else {
-			_, err = gw.Write(buf)
-			if err != nil {
-				return err
-			}
+		firstByte := localCache[0]
+		copy(localCache, localCache[1:])
+		localCache[len(localCache)-1] = buf[0]
+		_, err = writer.Write([]byte{firstByte})
+		if err != nil {
+			return err
 		}
 	}
+}
 
-	return nil
+// MaskBytes 将byteArray中的关键字替换为mask
+func MaskBytes(byteArray []byte, keywords [][]byte, mask []byte) []byte {
+	for _, keyword := range keywords {
+		byteArray = bytes.ReplaceAll(byteArray, keyword, bytes.Repeat(mask, len(keyword)))
+	}
+	return byteArray
 }

@@ -11,7 +11,8 @@
     - `type SuperMap[K int | string, V any] struct`: SuperMap 是一个泛型实现的协程安全的Map,提供多种实用的操作函数，如：过滤、更新、比较 等
 - stream
     - `func Replace(reader io.Reader, writer io.Writer, old, new []byte) error `: Replace 从reader中读取数据，替换old为new，并写入writer（流式处理，不会全部读到内存里）
-    - `func ReplaceGzip(reader io.Reader, writer io.Writer, old, new []byte) error `: ReplaceGzip 从reader中读取数据，替换old为new，并写入writer，reader和writer内容都是gzip格式（流式处理，不会全部读到内存里）
+    - `func MaskKeywords(reader io.Reader, writer io.Writer, words [][]byte, mask []byte) error`: MaskKeywords 从reader中读取数据，将words中的关键字替换为mask，并写入writer
+	- `func MaskBytes(byteArray []byte, keywords [][]byte, mask []byte) []byte`: MaskBytes 将byteArray中的关键字替换为mask
 - strtools
     - `ParseList(s string) []string`: ParseList 解析字符串为字符串列表
 - tokenbucket
