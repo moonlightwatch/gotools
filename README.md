@@ -17,6 +17,8 @@
     - `ParseList(s string) []string`: ParseList 解析字符串为字符串列表
 - tokenbucket
 	- `type TokenBucket struct`: TokenBucket 是一个令牌桶，桶内自带锁，协程安全
+- goroutinepool
+    - `type GoroutinePool[T, R interface{}] struct `: GoroutinePool 一个基于泛型的协程池，可以控制协程数量，支持自定义参数和返回值
 
 ## 使用示例
 
